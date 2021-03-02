@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Movable_Vertical_separator</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            border-collapse: collapse;
+            overflow:hidden;
+            margin : 0;
+            padding: 0;
+        }
+        #container{
+            border: 1px solid black;
+            height: 100%;
+            border-collapse: collapse;
+            display: flex;
+            align-items: stretch;
+            padding: 0;
+            
+        }
+
+        #left_panel{
+            border: 1px solid red;            
+            width: 50%;
+            
+        }
+
+
+
+        .draggable{
+            border: 0;
+            background-color:teal;
+            width: 5px;
+            cursor: ew-resize;
+            user-select: none;
+        }
+
+        #right_panel{
+            border: 1px solid blueviolet;
+            width: 50%;
+            flex: 1 1 0%;
+        }
+      
+    </style>
+
+
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded',()=>{
+
+            obj_container = document.getElementById("container");
+            obj_vertical_separator = document.getElementById("vertical_separator");
+
+            previous_sibling =  obj_vertical_separator.previousElementSibling;
+            next_sibling =  obj_vertical_separator.nextElementSibling;
+
+
+            //lets get current poosition of mouse
+            x = 0
+            y = 0
+            previous_sibling_width = 0
+            next_sibling_width = 0
+
+            drag_active = false;
+
+
+            mousedown_callback = (e)=>{ 
+                drag_active = true;
+                //console.log(" - " + e.clientX);
+                
+                x = e.clientX;
+                previous_sibling_width = previous_sibling.getBoundingClientRect().width;
+
+
+                obj_container.addEventListener('mousemove',mousemove_callback)
+                obj_container.addEventListener('mouseup',mouseup_callback)
+            }
+
+
+            mousemove_callback = (e)=>{ 
+
+                if (drag_active == true){
+                    
+                    delta_x = e.clientX - x;
+                    
+                    w = (previous_sibling_width + delta_x) * 100 / obj_vertical_separator.parentNode.getBoundingClientRect().width;
+                    //console.log(w)
+                    previous_sibling.style.width = `${w}%`;
+                    obj_vertical_separator.style.cursor = 'col-resize'
+                    document.body.style.cursor = 'col-resize';
+                    previous_sibling.style.userSelect = 'none';
+                    previous_sibling.style.pointerEvents = 'none';
+
+                    next_sibling.style.userSelect = 'none';
+                    next_sibling.style.pointerEvents = 'none';
+                }
+            }
+
+            mouseup_callback = (e)=>{
+                drag_active = false;
+                console.log(" - " + e.clientX);
+                
+                obj_vertical_separator.style.removeProperty('cursor');
+                document.body.style.removeProperty('cursor');
+
+                previous_sibling.style.removeProperty('user-select');
+                previous_sibling.style.removeProperty('pointer-events');
+
+                next_sibling.style.removeProperty('user-select');
+                next_sibling.style.removeProperty('pointer-events');
+                
+                obj_container.removeEventListener('mousemove',mousemove_callback)
+                obj_container.removeEventListener('mouseup',mouseup_callback)            
+
+            }
+            
+            
+            
+            obj_vertical_separator.addEventListener('mousedown',mousedown_callback)
+                
+        })
+
+    </script>
+</head>
+<body>
+    
+    <div id="container" >
+
+        <div id="left_panel">
+
+        </div>
+
+        <div id="vertical_separator" class="draggable">
+
+        </div>
+
+        <div id="right_panel">
+
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+</html>
